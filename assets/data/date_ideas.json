@@ -1,0 +1,58 @@
+[
+  {
+    "id": "1",
+    "name": "Sunset Picnic",
+    "description": "A cozy blanket, your favorite snacks, and the most beautiful sunset view in the city. Just us and the golden hour.",
+    "time": "Evening, ~2 hours",
+    "imagePath": "assets/images/picnic.jpg"
+  },
+  {
+    "id": "2",
+    "name": "Stargazing Night",
+    "description": "Drive out to a quiet spot away from city lights, lay back, and count the stars together. Hot cocoa included.",
+    "time": "Night, ~3 hours",
+    "imagePath": "assets/images/stargazing.jpg"
+  },
+  {
+    "id": "3",
+    "name": "Cooking Together",
+    "description": "Pick a new recipe, shop for ingredients, and cook a delicious meal together at home. Bonus points for dessert!",
+    "time": "Evening, ~3 hours",
+    "imagePath": "assets/images/cooking.jpg"
+  },
+  {
+    "id": "4",
+    "name": "Art Museum Visit",
+    "description": "Wander through beautiful galleries, share our thoughts on art, and find inspiration in creativity.",
+    "time": "Afternoon, ~2-3 hours",
+    "imagePath": "assets/images/museum.jpg"
+  },
+  {
+    "id": "5",
+    "name": "Beach Walk",
+    "description": "Feel the sand between our toes, listen to the waves, and enjoy a peaceful walk along the shore.",
+    "time": "Anytime, ~2 hours",
+    "imagePath": "assets/images/beach.jpg"
+  },
+  {
+    "id": "6",
+    "name": "Movie Marathon",
+    "description": "Build a cozy fort, grab all the snacks, and binge our favorite movies or discover new ones together.",
+    "time": "Evening, ~4+ hours",
+    "imagePath": "assets/images/movie.jpg"
+  },
+  {
+    "id": "7",
+    "name": "Coffee Shop Hopping",
+    "description": "Explore the city's best cafés, try different drinks, and find our new favorite spot together.",
+    "time": "Afternoon, ~3 hours",
+    "imagePath": "assets/images/coffee.jpg"
+  },
+  {
+    "id": "8",
+    "name": "Botanical Garden",
+    "description": "Stroll through beautiful gardens, admire the flowers, and enjoy a peaceful escape into nature.",
+    "time": "Morning/Afternoon, ~2 hours",
+    "imagePath": "assets/images/garden.jpg"
+  }
+]
