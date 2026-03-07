@@ -27,17 +27,16 @@ class ComparisonScreen extends StatefulWidget {
 
 class _ComparisonScreenState extends State<ComparisonScreen>
     with TickerProviderStateMixin {
-  late DateIdea _champion; // Current "king of the hill"
-  late DateIdea _challenger; // Current challenger
+  late DateIdea _leftIdea; // Idea on the left/top
+  late DateIdea _rightIdea; // Idea on the right/bottom
   int _currentRound = 1; // Which comparison we're on (1-based)
-  int _challengerIndex = 1; // Index of next challenger in the list
+  int _nextIdeaIndex = 2; // Index of next idea in the list
 
   // Animation controllers
-  late AnimationController _championController;
-  late AnimationController _challengerController;
-  late Animation<Offset> _championSlideAnimation;
-  late Animation<Offset> _challengerSlideAnimation;
-  late Animation<double> _fadeAnimation;
+  late AnimationController _leftController;
+  late AnimationController _rightController;
+  late Animation<Offset> _leftSlideAnimation;
+  late Animation<Offset> _rightSlideAnimation;
 
   bool _isAnimating = false;
   DateIdea? _selectedIdea;
@@ -49,108 +48,151 @@ class _ComparisonScreenState extends State<ComparisonScreen>
     super.initState();
 
     // Initialize with first two ideas
-    _champion = widget.dateIdeas[0];
-    _challenger = widget.dateIdeas[1];
-    _challengerIndex = 2;
+    _leftIdea = widget.dateIdeas[0];
+    _rightIdea = widget.dateIdeas[1];
+    _nextIdeaIndex = 2;
 
     // Setup animations
-    _championController = AnimationController(
+    _leftController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
 
-    _challengerController = AnimationController(
+    _rightController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
 
-    _championSlideAnimation = Tween<Offset>(
+    _leftSlideAnimation = Tween<Offset>(
       begin: Offset.zero,
-      end: const Offset(-1.5, 0),
+      end: Offset.zero, // Will be set dynamically
     ).animate(CurvedAnimation(
-      parent: _championController,
+      parent: _leftController,
       curve: Curves.easeInBack,
     ));
 
-    _challengerSlideAnimation = Tween<Offset>(
-      begin: const Offset(1.5, 0),
-      end: Offset.zero,
+    _rightSlideAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: Offset.zero, // Will be set dynamically
     ).animate(CurvedAnimation(
-      parent: _challengerController,
+      parent: _rightController,
       curve: Curves.easeOutBack,
     ));
 
-    _fadeAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _championController,
-      curve: Curves.easeIn,
-    ));
-
-    // Start with challenger sliding in
-    _challengerController.forward();
+    // Initial animation will be triggered after first frame to get screen size
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final screenWidth = MediaQuery.of(context).size.width;
+      final isWideScreen = screenWidth > 700;
+      final enterRight = isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
+      
+      _rightSlideAnimation = Tween<Offset>(
+        begin: enterRight,
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: _rightController,
+        curve: Curves.easeOutBack,
+      ));
+      _rightController.forward();
+    });
   }
 
   @override
   void dispose() {
-    _championController.dispose();
-    _challengerController.dispose();
+    _leftController.dispose();
+    _rightController.dispose();
     super.dispose();
   }
 
   void _handleSelection(DateIdea selected, DateIdea loser) async {
     if (_isAnimating) return;
 
+    final leftWon = selected == _leftIdea;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWideScreen = screenWidth > 700;
+
     setState(() {
       _isAnimating = true;
       _selectedIdea = selected;
     });
 
+    // Determine animation offsets based on layout
+    final exitLeft = isWideScreen ? const Offset(-1.5, 0) : const Offset(0, -1.5);
+    final exitRight = isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
+    final enterLeft = isWideScreen ? const Offset(-1.5, 0) : const Offset(0, -1.5);
+    final enterRight = isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
+
     // Animate losing card out
-    if (loser == _champion) {
-      await _championController.forward();
-    } else {
-      _challengerSlideAnimation = Tween<Offset>(
+    if (leftWon) {
+      // Left won - slide right out
+      _rightSlideAnimation = Tween<Offset>(
         begin: Offset.zero,
-        end: const Offset(1.5, 0),
+        end: exitRight,
       ).animate(CurvedAnimation(
-        parent: _challengerController,
+        parent: _rightController,
         curve: Curves.easeInBack,
       ));
-      _challengerController.reset();
-      await _challengerController.forward();
+      _rightController.reset();
+      await _rightController.forward();
+    } else {
+      // Right won - slide left out
+      _leftSlideAnimation = Tween<Offset>(
+        begin: Offset.zero,
+        end: exitLeft,
+      ).animate(CurvedAnimation(
+        parent: _leftController,
+        curve: Curves.easeInBack,
+      ));
+      _leftController.reset();
+      await _leftController.forward();
     }
 
     // Check if we're done
-    if (_challengerIndex >= widget.dateIdeas.length) {
+    if (_nextIdeaIndex >= widget.dateIdeas.length) {
       // Competition complete!
       widget.onComplete(selected);
       return;
     }
 
-    // Prepare next round
+    // Prepare next round - winner stays on its side, new challenger comes from opposite
+    final nextIdea = widget.dateIdeas[_nextIdeaIndex];
+    
     setState(() {
-      _champion = selected;
-      _challenger = widget.dateIdeas[_challengerIndex];
-      _challengerIndex++;
+      if (leftWon) {
+        // Left stays, new challenger comes from right
+        _rightIdea = nextIdea;
+      } else {
+        // Right stays, new challenger comes from left
+        _leftIdea = nextIdea;
+      }
+      _nextIdeaIndex++;
       _currentRound++;
       _selectedIdea = null;
     });
 
-    // Reset animations
-    _championController.reset();
-    _challengerSlideAnimation = Tween<Offset>(
-      begin: const Offset(1.5, 0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _challengerController,
-      curve: Curves.easeOutBack,
-    ));
-    _challengerController.reset();
-
-    // Animate new challenger in
-    await _challengerController.forward();
+    // Reset and animate new challenger in
+    if (leftWon) {
+      // New challenger slides in from right
+      _rightSlideAnimation = Tween<Offset>(
+        begin: enterRight,
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: _rightController,
+        curve: Curves.easeOutBack,
+      ));
+      _rightController.reset();
+      await _rightController.forward();
+    } else {
+      // New challenger slides in from left
+      _leftSlideAnimation = Tween<Offset>(
+        begin: enterLeft,
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: _leftController,
+        curve: Curves.easeOutBack,
+      ));
+      _leftController.reset();
+      await _leftController.forward();
+    }
 
     setState(() {
       _isAnimating = false;
@@ -277,13 +319,10 @@ class _ComparisonScreenState extends State<ComparisonScreen>
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Champion card (left)
+        // Left card
         SlideTransition(
-          position: _championSlideAnimation,
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: _buildChampionCard(),
-          ),
+          position: _leftSlideAnimation,
+          child: _buildLeftCard(),
         ),
 
         // VS indicator
@@ -292,10 +331,10 @@ class _ComparisonScreenState extends State<ComparisonScreen>
           child: _buildVsIndicator(),
         ),
 
-        // Challenger card (right)
+        // Right card
         SlideTransition(
-          position: _challengerSlideAnimation,
-          child: _buildChallengerCard(),
+          position: _rightSlideAnimation,
+          child: _buildRightCard(),
         ),
       ],
     );
@@ -305,13 +344,10 @@ class _ComparisonScreenState extends State<ComparisonScreen>
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Champion card (top)
+        // Top card (left in horizontal)
         SlideTransition(
-          position: _championSlideAnimation,
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: _buildChampionCard(),
-          ),
+          position: _leftSlideAnimation,
+          child: _buildLeftCard(),
         ),
 
         // VS indicator
@@ -320,39 +356,39 @@ class _ComparisonScreenState extends State<ComparisonScreen>
           child: _buildVsIndicator(),
         ),
 
-        // Challenger card (bottom)
+        // Bottom card (right in horizontal)
         SlideTransition(
-          position: _challengerSlideAnimation,
-          child: _buildChallengerCard(),
+          position: _rightSlideAnimation,
+          child: _buildRightCard(),
         ),
       ],
     );
   }
 
-  Widget _buildChampionCard() {
-    final isSelected = _selectedIdea == _champion;
+  Widget _buildLeftCard() {
+    final isSelected = _selectedIdea == _leftIdea;
     return AnimatedScale(
       scale: isSelected ? 1.05 : 1.0,
       duration: const Duration(milliseconds: 200),
       child: DateCard(
-        dateIdea: _champion,
+        dateIdea: _leftIdea,
         onTap: _isAnimating
             ? null
-            : () => _handleSelection(_champion, _challenger),
+            : () => _handleSelection(_leftIdea, _rightIdea),
       ),
     );
   }
 
-  Widget _buildChallengerCard() {
-    final isSelected = _selectedIdea == _challenger;
+  Widget _buildRightCard() {
+    final isSelected = _selectedIdea == _rightIdea;
     return AnimatedScale(
       scale: isSelected ? 1.05 : 1.0,
       duration: const Duration(milliseconds: 200),
       child: DateCard(
-        dateIdea: _challenger,
+        dateIdea: _rightIdea,
         onTap: _isAnimating
             ? null
-            : () => _handleSelection(_challenger, _champion),
+            : () => _handleSelection(_rightIdea, _leftIdea),
       ),
     );
   }

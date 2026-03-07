@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "king-of-hill",
+    "prod": "date-with-jenn"
+  },
+  "targets": {},
+  "etags": {}
+}

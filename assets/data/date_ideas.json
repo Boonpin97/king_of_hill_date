@@ -2,44 +2,44 @@
   {
     "id": "1",
     "name": "Sunset Picnic",
-    "description": "A cozy blanket, your favorite snacks, and the most beautiful sunset view in the city. Just us and the golden hour.",
-    "time": "Evening, ~2 hours",
+    "description": "A cozy mat, our favorite snacks, kite flying, a few card games and relaxing talks. Just us and the golden hour.",
+    "time": "Evening, 5-9pm",
     "imagePath": "assets/images/picnic.jpg"
   },
   {
     "id": "2",
-    "name": "Stargazing Night",
-    "description": "Drive out to a quiet spot away from city lights, lay back, and count the stars together. Hot cocoa included.",
-    "time": "Night, ~3 hours",
-    "imagePath": "assets/images/stargazing.jpg"
+    "name": "Tea Date",
+    "description": "A cozy tea session at Clipper Tea, relax, chat, and learn more about each other with a little “get to know you” card game.",
+    "time": "Afternoon, 1.30-3.30pm",
+    "imagePath": "assets/images/tea.jpg"
   },
   {
     "id": "3",
-    "name": "Cooking Together",
-    "description": "Pick a new recipe, shop for ingredients, and cook a delicious meal together at home. Bonus points for dessert!",
-    "time": "Evening, ~3 hours",
-    "imagePath": "assets/images/cooking.jpg"
+    "name": "Tea Brewing Workshop",
+    "description": "Explore the origins of tea, its role in Singaporean traditions, and the values of mindfulness and harmony it represents.",
+    "time": "Afternoon, ~2-3 hours",
+    "imagePath": "assets/images/tea_workshop.jpg"
   },
   {
     "id": "4",
-    "name": "Art Museum Visit",
-    "description": "Wander through beautiful galleries, share our thoughts on art, and find inspiration in creativity.",
+    "name": "Painting",
+    "description": "Unleash our creativity with a painting session. We'll have fun expressing ourselves on canvas.",
     "time": "Afternoon, ~2-3 hours",
-    "imagePath": "assets/images/museum.jpg"
+    "imagePath": "assets/images/painting.jpg"
   },
   {
     "id": "5",
-    "name": "Beach Walk",
-    "description": "Feel the sand between our toes, listen to the waves, and enjoy a peaceful walk along the shore.",
-    "time": "Anytime, ~2 hours",
-    "imagePath": "assets/images/beach.jpg"
+    "name": "Pottery",
+    "description": "Create beautiful pottery pieces together. Maybe we can make matching mugs hehe",
+    "time": "Afternoon, ~2-3 hours",
+    "imagePath": "assets/images/pottery.jpg"
   },
   {
     "id": "6",
-    "name": "Movie Marathon",
-    "description": "Build a cozy fort, grab all the snacks, and binge our favorite movies or discover new ones together.",
+    "name": "Tufting",
+    "description": "Create a cozy rug or wall hanging together. A unique and creative date idea.",
     "time": "Evening, ~4+ hours",
-    "imagePath": "assets/images/movie.jpg"
+    "imagePath": "assets/images/tufting.jpg"
   },
   {
     "id": "7",
