@@ -79,8 +79,8 @@ class IntroScreen extends StatelessWidget {
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 400),
                     child: Text(
-                      'Help me choose our next adventure together! '
-                      'Pick your favorites and let\'s find the perfect date.',
+                      'Help us choose our next adventure together! '
+                      'Pick your favorites and let\'s find the perfect date :)',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                         height: 1.5,

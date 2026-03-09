@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "king-of-hill",
+    "default": "date-with-jenn",
     "prod": "date-with-jenn"
   },
   "targets": {},

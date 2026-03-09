@@ -1,70 +1,13 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import '../models/date_idea.dart';
 
-/// A list of 8 romantic date ideas.
-/// Replace the imagePath values with your own images in assets/images/
-final List<DateIdea> dateIdeas = [
-  const DateIdea(
-    id: '1',
-    name: 'Sunset Picnic',
-    description:
-        'A cozy blanket, your favorite snacks, and the most beautiful sunset view in the city. Just us and the golden hour.',
-    time: 'Evening, ~2 hours',
-    imagePath: 'assets/images/picnic.jpg',
-  ),
-  const DateIdea(
-    id: '2',
-    name: 'Stargazing Night',
-    description:
-        'Drive out to a quiet spot away from city lights, lay back, and count the stars together. Hot cocoa included.',
-    time: 'Night, ~3 hours',
-    imagePath: 'assets/images/stargazing.jpg',
-  ),
-  const DateIdea(
-    id: '3',
-    name: 'Cooking Together',
-    description:
-        'Pick a new recipe, shop for ingredients, and cook a delicious meal together at home. Bonus points for dessert!',
-    time: 'Evening, ~3 hours',
-    imagePath: 'assets/images/cooking.jpg',
-  ),
-  const DateIdea(
-    id: '4',
-    name: 'Art Museum Visit',
-    description:
-        'Wander through beautiful galleries, share our thoughts on art, and find inspiration in creativity.',
-    time: 'Afternoon, ~2-3 hours',
-    imagePath: 'assets/images/museum.jpg',
-  ),
-  const DateIdea(
-    id: '5',
-    name: 'Beach Walk',
-    description:
-        'Feel the sand between our toes, listen to the waves, and enjoy a peaceful walk along the shore.',
-    time: 'Anytime, ~2 hours',
-    imagePath: 'assets/images/beach.jpg',
-  ),
-  const DateIdea(
-    id: '6',
-    name: 'Movie Marathon',
-    description:
-        'Build a cozy fort, grab all the snacks, and binge our favorite movies or discover new ones together.',
-    time: 'Evening, ~4+ hours',
-    imagePath: 'assets/images/movie.jpg',
-  ),
-  const DateIdea(
-    id: '7',
-    name: 'Coffee Shop Hopping',
-    description:
-        'Explore the city\'s best cafés, try different drinks, and find our new favorite spot together.',
-    time: 'Afternoon, ~3 hours',
-    imagePath: 'assets/images/coffee.jpg',
-  ),
-  const DateIdea(
-    id: '8',
-    name: 'Botanical Garden',
-    description:
-        'Stroll through beautiful gardens, admire the flowers, and enjoy a peaceful escape into nature.',
-    time: 'Morning/Afternoon, ~2 hours',
-    imagePath: 'assets/images/garden.jpg',
-  ),
-];
+/// Loads date ideas from the JSON asset file at runtime.
+Future<List<DateIdea>> loadDateIdeas() async {
+  final String jsonString =
+      await rootBundle.loadString('assets/data/date_ideas.json');
+  final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
+  return jsonList
+      .map((e) => DateIdea.fromJson(e as Map<String, dynamic>))
+      .toList();
+}

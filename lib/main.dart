@@ -44,6 +44,9 @@ class DatePickerApp extends StatelessWidget {
 /// The app state that determines which screen to show.
 enum AppScreen { intro, comparison, result }
 
+/// Set to true to randomize idea order, false to show in sequence by ID.
+const bool shuffleIdeas = false;
+
 /// Home widget that manages navigation between screens.
 class DatePickerHome extends StatefulWidget {
   const DatePickerHome({super.key});
@@ -55,17 +58,32 @@ class DatePickerHome extends StatefulWidget {
 class _DatePickerHomeState extends State<DatePickerHome> {
   AppScreen _currentScreen = AppScreen.intro;
   DateIdea? _winner;
-  late List<DateIdea> _shuffledIdeas;
+  List<DateIdea> _loadedIdeas = [];
+  List<DateIdea> _shuffledIdeas = [];
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _shuffleIdeas();
+    _loadIdeas();
+  }
+
+  Future<void> _loadIdeas() async {
+    final ideas = await loadDateIdeas();
+    setState(() {
+      _loadedIdeas = ideas;
+      _loading = false;
+      _shuffleIdeas();
+    });
   }
 
   void _shuffleIdeas() {
-    // Create a shuffled copy of the date ideas for variety
-    _shuffledIdeas = List.from(dateIdeas)..shuffle();
+    if (shuffleIdeas) {
+      _shuffledIdeas = List.from(_loadedIdeas)..shuffle();
+    } else {
+      _shuffledIdeas = List.from(_loadedIdeas)
+        ..sort((a, b) => a.id.compareTo(b.id));
+    }
   }
 
   void _startComparison() {
@@ -91,6 +109,11 @@ class _DatePickerHomeState extends State<DatePickerHome> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       transitionBuilder: (child, animation) {

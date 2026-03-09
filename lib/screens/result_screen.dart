@@ -79,119 +79,93 @@ class _ResultScreenState extends State<ResultScreen>
             opacity: _fadeAnimation,
             child: ScaleTransition(
               scale: _scaleAnimation,
-              child: Row(
-                children: [
-                  // Left side - Winner card
-                  Expanded(
-                    flex: 1,
-                    child: Center(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 480),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Celebration icon
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                                blurRadius: 20,
+                                spreadRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.celebration,
+                            size: 36,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Title
+                        Text(
+                          'It\'s a Date!',
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Winner card
+                        DateCard(
+                          dateIdea: widget.winner,
+                          isWinner: true,
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Sweet message
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Celebration icon
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primaryContainer,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                                    blurRadius: 20,
-                                    spreadRadius: 5,
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.celebration,
-                                size: 36,
-                                color: theme.colorScheme.primary,
-                              ),
+                            Icon(
+                              Icons.favorite,
+                              color: theme.colorScheme.primary,
+                              size: 20,
                             ),
-                            const SizedBox(height: 20),
-
-                            // Title
+                            const SizedBox(width: 8),
                             Text(
-                              'It\'s a Date!',
-                              style: theme.textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
+                              'Can\'t wait to spend this time with you!',
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-
-                            // Winner card
-                            DateCard(
-                              dateIdea: widget.winner,
-                              isWinner: true,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Divider
-                  Container(
-                    width: 1,
-                    height: double.infinity,
-                    margin: const EdgeInsets.symmetric(vertical: 40),
-                    color: theme.colorScheme.outlineVariant,
-                  ),
-
-                  // Right side - Availability & actions
-                  Expanded(
-                    flex: 1,
-                    child: Center(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Sweet message
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.favorite,
-                                  color: theme.colorScheme.primary,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Can\'t wait to spend this time with you!',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onSurface,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 32),
-
-                            // Restart button
-                            OutlinedButton.icon(
-                              onPressed: widget.onRestart,
-                              icon: const Icon(Icons.refresh),
-                              label: const Text('Start Over'),
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
+                                fontStyle: FontStyle.italic,
                               ),
                             ),
                           ],
                         ),
-                      ),
+                        const SizedBox(height: 32),
+
+                        // Restart button
+                        OutlinedButton.icon(
+                          onPressed: widget.onRestart,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Start Over'),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),
