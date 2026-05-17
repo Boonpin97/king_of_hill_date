@@ -1,11 +1,11 @@
 {
-    "name": "kill_of_hill_date",
-    "short_name": "kill_of_hill_date",
+    "name": "Our Perfect Date",
+    "short_name": "Perfect Date",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFF8F5",
+    "theme_color": "#B84261",
+    "description": "A playful portrait-first app for choosing your next date idea together.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -27,12 +27,11 @@ class ComparisonScreen extends StatefulWidget {
 
 class _ComparisonScreenState extends State<ComparisonScreen>
     with TickerProviderStateMixin {
-  late DateIdea _leftIdea; // Idea on the left/top
-  late DateIdea _rightIdea; // Idea on the right/bottom
-  int _currentRound = 1; // Which comparison we're on (1-based)
-  int _nextIdeaIndex = 2; // Index of next idea in the list
+  late DateIdea _leftIdea;
+  late DateIdea _rightIdea;
+  int _currentRound = 1;
+  int _nextIdeaIndex = 2;
 
-  // Animation controllers
   late AnimationController _leftController;
   late AnimationController _rightController;
   late Animation<Offset> _leftSlideAnimation;
@@ -47,12 +46,10 @@ class _ComparisonScreenState extends State<ComparisonScreen>
   void initState() {
     super.initState();
 
-    // Initialize with first two ideas
     _leftIdea = widget.dateIdeas[0];
     _rightIdea = widget.dateIdeas[1];
     _nextIdeaIndex = 2;
 
-    // Setup animations
     _leftController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
@@ -65,33 +62,30 @@ class _ComparisonScreenState extends State<ComparisonScreen>
 
     _leftSlideAnimation = Tween<Offset>(
       begin: Offset.zero,
-      end: Offset.zero, // Will be set dynamically
-    ).animate(CurvedAnimation(
-      parent: _leftController,
-      curve: Curves.easeInBack,
-    ));
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(parent: _leftController, curve: Curves.easeInBack),
+    );
 
     _rightSlideAnimation = Tween<Offset>(
       begin: Offset.zero,
-      end: Offset.zero, // Will be set dynamically
-    ).animate(CurvedAnimation(
-      parent: _rightController,
-      curve: Curves.easeOutBack,
-    ));
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(parent: _rightController, curve: Curves.easeOutBack),
+    );
 
-    // Initial animation will be triggered after first frame to get screen size
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final screenWidth = MediaQuery.of(context).size.width;
       final isWideScreen = screenWidth > 700;
-      final enterRight = isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
-      
+      final enterRight =
+          isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
+
       _rightSlideAnimation = Tween<Offset>(
         begin: enterRight,
         end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: _rightController,
-        curve: Curves.easeOutBack,
-      ));
+      ).animate(
+        CurvedAnimation(parent: _rightController, curve: Curves.easeOutBack),
+      );
       _rightController.forward();
     });
   }
@@ -103,7 +97,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
     super.dispose();
   }
 
-  void _handleSelection(DateIdea selected, DateIdea loser) async {
+  Future<void> _handleSelection(DateIdea selected) async {
     if (_isAnimating) return;
 
     final leftWon = selected == _leftIdea;
@@ -115,53 +109,42 @@ class _ComparisonScreenState extends State<ComparisonScreen>
       _selectedIdea = selected;
     });
 
-    // Determine animation offsets based on layout
     final exitLeft = isWideScreen ? const Offset(-1.5, 0) : const Offset(0, -1.5);
     final exitRight = isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
     final enterLeft = isWideScreen ? const Offset(-1.5, 0) : const Offset(0, -1.5);
     final enterRight = isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
 
-    // Animate losing card out
     if (leftWon) {
-      // Left won - slide right out
       _rightSlideAnimation = Tween<Offset>(
         begin: Offset.zero,
         end: exitRight,
-      ).animate(CurvedAnimation(
-        parent: _rightController,
-        curve: Curves.easeInBack,
-      ));
+      ).animate(
+        CurvedAnimation(parent: _rightController, curve: Curves.easeInBack),
+      );
       _rightController.reset();
       await _rightController.forward();
     } else {
-      // Right won - slide left out
       _leftSlideAnimation = Tween<Offset>(
         begin: Offset.zero,
         end: exitLeft,
-      ).animate(CurvedAnimation(
-        parent: _leftController,
-        curve: Curves.easeInBack,
-      ));
+      ).animate(
+        CurvedAnimation(parent: _leftController, curve: Curves.easeInBack),
+      );
       _leftController.reset();
       await _leftController.forward();
     }
 
-    // Check if we're done
     if (_nextIdeaIndex >= widget.dateIdeas.length) {
-      // Competition complete!
       widget.onComplete(selected);
       return;
     }
 
-    // Prepare next round - winner stays on its side, new challenger comes from opposite
     final nextIdea = widget.dateIdeas[_nextIdeaIndex];
-    
+
     setState(() {
       if (leftWon) {
-        // Left stays, new challenger comes from right
         _rightIdea = nextIdea;
       } else {
-        // Right stays, new challenger comes from left
         _leftIdea = nextIdea;
       }
       _nextIdeaIndex++;
@@ -169,27 +152,22 @@ class _ComparisonScreenState extends State<ComparisonScreen>
       _selectedIdea = null;
     });
 
-    // Reset and animate new challenger in
     if (leftWon) {
-      // New challenger slides in from right
       _rightSlideAnimation = Tween<Offset>(
         begin: enterRight,
         end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: _rightController,
-        curve: Curves.easeOutBack,
-      ));
+      ).animate(
+        CurvedAnimation(parent: _rightController, curve: Curves.easeOutBack),
+      );
       _rightController.reset();
       await _rightController.forward();
     } else {
-      // New challenger slides in from left
       _leftSlideAnimation = Tween<Offset>(
         begin: enterLeft,
         end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: _leftController,
-        curve: Curves.easeOutBack,
-      ));
+      ).animate(
+        CurvedAnimation(parent: _leftController, curve: Curves.easeOutBack),
+      );
       _leftController.reset();
       await _leftController.forward();
     }
@@ -202,51 +180,72 @@ class _ComparisonScreenState extends State<ComparisonScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isWideScreen = screenWidth > 700;
+    final screenSize = MediaQuery.of(context).size;
+    final isWideScreen = screenSize.width > 700;
+    final isCompactPortrait =
+        !isWideScreen &&
+        screenSize.width < 430 &&
+        screenSize.height > screenSize.width;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
+      body: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
               theme.colorScheme.surface,
-              theme.colorScheme.surfaceContainerLow,
+              theme.colorScheme.primaryContainer.withValues(alpha: 0.12),
+              theme.colorScheme.secondaryContainer.withValues(alpha: 0.16),
             ],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Header with progress
-              _buildHeader(theme),
-
-              // Cards area
+              _buildHeader(theme, isCompactPortrait),
               Expanded(
                 child: Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 24,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isCompactPortrait ? 12 : 16,
+                      vertical: isCompactPortrait ? 16 : 24,
                     ),
-                    child: isWideScreen
-                        ? _buildHorizontalLayout()
-                        : _buildVerticalLayout(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: isWideScreen ? 980 : 430,
+                      ),
+                      child: isWideScreen
+                          ? _buildHorizontalLayout()
+                          : _buildVerticalLayout(isCompactPortrait),
+                    ),
                   ),
                 ),
               ),
-
-              // Bottom hint
               Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: Text(
-                  'Tap the card you prefer',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  0,
+                  16,
+                  isCompactPortrait ? 14 : 24,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
+                    ),
+                  ),
+                  child: Text(
+                    'Tap the card you would honestly be excited to do next.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: isCompactPortrait ? 13 : 14,
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -257,59 +256,84 @@ class _ComparisonScreenState extends State<ComparisonScreen>
     );
   }
 
-  Widget _buildHeader(ThemeData theme) {
+  Widget _buildHeader(ThemeData theme, bool isCompactPortrait) {
     return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Title
-          Text(
-            'Which one speaks to you?',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
-            ),
+      padding: EdgeInsets.fromLTRB(
+        isCompactPortrait ? 12 : 16,
+        isCompactPortrait ? 12 : 16,
+        isCompactPortrait ? 12 : 16,
+        isCompactPortrait ? 8 : 16,
+      ),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 760),
+        padding: EdgeInsets.fromLTRB(
+          isCompactPortrait ? 16 : 20,
+          isCompactPortrait ? 16 : 18,
+          isCompactPortrait ? 16 : 20,
+          isCompactPortrait ? 14 : 18,
+        ),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface.withValues(alpha: 0.82),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
           ),
-          const SizedBox(height: 12),
-
-          // Progress indicator
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'Round $_currentRound of $_totalRounds',
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.w600,
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Which one speaks to you?',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontSize: isCompactPortrait ? 24 : null,
+                color: theme.colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: isCompactPortrait ? 8 : 10),
+            Text(
+              'Two ideas enter. One date plan survives.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: isCompactPortrait ? 12 : 14),
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isCompactPortrait ? 14 : 16,
+                    vertical: isCompactPortrait ? 8 : 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Round $_currentRound of $_totalRounds',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontSize: isCompactPortrait ? 12 : null,
+                      color: theme.colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Progress bar
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 300),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                value: _currentRound / _totalRounds,
-                backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                minHeight: 6,
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      value: _currentRound / _totalRounds,
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      minHeight: isCompactPortrait ? 10 : 12,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -319,44 +343,38 @@ class _ComparisonScreenState extends State<ComparisonScreen>
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Left card
-        SlideTransition(
-          position: _leftSlideAnimation,
-          child: _buildLeftCard(),
+        Expanded(
+          child: SlideTransition(
+            position: _leftSlideAnimation,
+            child: Align(child: _buildLeftCard()),
+          ),
         ),
-
-        // VS indicator
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: _buildVsIndicator(),
         ),
-
-        // Right card
-        SlideTransition(
-          position: _rightSlideAnimation,
-          child: _buildRightCard(),
+        Expanded(
+          child: SlideTransition(
+            position: _rightSlideAnimation,
+            child: Align(child: _buildRightCard()),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildVerticalLayout() {
+  Widget _buildVerticalLayout(bool isCompactPortrait) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Top card (left in horizontal)
         SlideTransition(
           position: _leftSlideAnimation,
           child: _buildLeftCard(),
         ),
-
-        // VS indicator
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: _buildVsIndicator(),
+          padding: EdgeInsets.symmetric(vertical: isCompactPortrait ? 12 : 16),
+          child: _buildVsIndicator(isCompactPortrait: isCompactPortrait),
         ),
-
-        // Bottom card (right in horizontal)
         SlideTransition(
           position: _rightSlideAnimation,
           child: _buildRightCard(),
@@ -368,13 +386,11 @@ class _ComparisonScreenState extends State<ComparisonScreen>
   Widget _buildLeftCard() {
     final isSelected = _selectedIdea == _leftIdea;
     return AnimatedScale(
-      scale: isSelected ? 1.05 : 1.0,
+      scale: isSelected ? 1.03 : 1.0,
       duration: const Duration(milliseconds: 200),
       child: DateCard(
         dateIdea: _leftIdea,
-        onTap: _isAnimating
-            ? null
-            : () => _handleSelection(_leftIdea, _rightIdea),
+        onTap: _isAnimating ? null : () => _handleSelection(_leftIdea),
       ),
     );
   }
@@ -382,36 +398,44 @@ class _ComparisonScreenState extends State<ComparisonScreen>
   Widget _buildRightCard() {
     final isSelected = _selectedIdea == _rightIdea;
     return AnimatedScale(
-      scale: isSelected ? 1.05 : 1.0,
+      scale: isSelected ? 1.03 : 1.0,
       duration: const Duration(milliseconds: 200),
       child: DateCard(
         dateIdea: _rightIdea,
-        onTap: _isAnimating
-            ? null
-            : () => _handleSelection(_rightIdea, _leftIdea),
+        onTap: _isAnimating ? null : () => _handleSelection(_rightIdea),
       ),
     );
   }
 
-  Widget _buildVsIndicator() {
+  Widget _buildVsIndicator({bool isCompactPortrait = false}) {
     final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isCompactPortrait ? 14 : 16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.tertiaryContainer,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.colorScheme.primaryContainer,
+            theme.colorScheme.tertiaryContainer,
+          ],
+        ),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.shadow.withValues(alpha: 0.1),
-            blurRadius: 10,
+            color: theme.colorScheme.primary.withValues(alpha: 0.16),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Text(
         'VS',
         style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: theme.colorScheme.onTertiaryContainer,
+          fontSize: isCompactPortrait ? 15 : null,
+          fontWeight: FontWeight.w800,
+          color: theme.colorScheme.onPrimaryContainer,
+          letterSpacing: 1.2,
         ),
       ),
     );
