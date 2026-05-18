@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'data/date_ideas.dart';
 import 'models/date_idea.dart';
@@ -5,7 +7,43 @@ import 'screens/intro_screen.dart';
 import 'screens/comparison_screen.dart';
 import 'screens/result_screen.dart';
 
-void main() {
+const _firebaseWebApiKey = String.fromEnvironment('FIREBASE_WEB_API_KEY');
+const _firebaseWebAppId = String.fromEnvironment('FIREBASE_WEB_APP_ID');
+const _firebaseWebMessagingSenderId = String.fromEnvironment(
+  'FIREBASE_WEB_MESSAGING_SENDER_ID',
+);
+const _firebaseWebProjectId = String.fromEnvironment('FIREBASE_WEB_PROJECT_ID');
+const _firebaseWebAuthDomain = String.fromEnvironment('FIREBASE_WEB_AUTH_DOMAIN');
+const _firebaseWebStorageBucket = String.fromEnvironment('FIREBASE_WEB_STORAGE_BUCKET');
+const _firebaseWebMeasurementId = String.fromEnvironment('FIREBASE_WEB_MEASUREMENT_ID');
+
+bool get _hasFirebaseWebConfig =>
+    _firebaseWebApiKey.isNotEmpty &&
+    _firebaseWebAppId.isNotEmpty &&
+    _firebaseWebMessagingSenderId.isNotEmpty &&
+    _firebaseWebProjectId.isNotEmpty &&
+    _firebaseWebAuthDomain.isNotEmpty &&
+    _firebaseWebStorageBucket.isNotEmpty;
+
+FirebaseOptions get _firebaseWebOptions => FirebaseOptions(
+  apiKey: _firebaseWebApiKey,
+  appId: _firebaseWebAppId,
+  messagingSenderId: _firebaseWebMessagingSenderId,
+  projectId: _firebaseWebProjectId,
+  authDomain: _firebaseWebAuthDomain,
+  storageBucket: _firebaseWebStorageBucket,
+  measurementId: _firebaseWebMeasurementId.isEmpty ? null : _firebaseWebMeasurementId,
+);
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (kIsWeb && _hasFirebaseWebConfig) {
+    await Firebase.initializeApp(
+      options: _firebaseWebOptions,
+    );
+  }
+
   runApp(const DatePickerApp());
 }
 
@@ -181,11 +219,39 @@ class _DatePickerHomeState extends State<DatePickerHome> {
 
   Future<void> _loadIdeas() async {
     final ideas = await loadDateIdeas();
-    setState(() {
-      _loadedIdeas = ideas;
-      _loading = false;
-      _shuffleIdeas();
+    _loadedIdeas = ideas;
+    _shuffleIdeas();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _precacheIdeaImages(ideas);
+      if (!mounted) return;
+
+      setState(() {
+        _loading = false;
+      });
     });
+  }
+
+  Future<void> _precacheIdeaImages(List<DateIdea> ideas) async {
+    final imagePaths = ideas.map((idea) => idea.imagePath).toSet();
+
+    await Future.wait(
+      imagePaths.map(
+        (imagePath) async {
+          try {
+            await precacheImage(
+              AssetImage(imagePath),
+              context,
+            ).timeout(const Duration(seconds: 2));
+          } catch (_) {
+            // Keep app startup resilient even if one asset fails to warm up.
+          }
+        },
+      ),
+    ).timeout(
+      const Duration(seconds: 4),
+      onTimeout: () => <Null>[],
+    );
   }
 
   void _shuffleIdeas() {

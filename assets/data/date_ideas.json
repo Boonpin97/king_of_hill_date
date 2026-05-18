@@ -1,65 +1,58 @@
 [
   {
     "id": "1",
-    "name": "Pottery Painting",
-    "description": "Personalised pottery painting with a wide selection of ceramic pieces",
+    "name": "He Xiangning: Ink & Intent",
+    "description": "Explore over 50 ink works and archival materials together, then turn the gallery stroll into a thoughtful conversation over dinner.",
     "time": "~2-3 hours",
-    "imagePath": "assets/images/pottery_painting.jpg"
+    "imagePath": "assets/images/he_xiangning_ink_intent.jpg",
+    "websiteUrl": "https://www.nationalgallery.sg/sg/en/exhibitions/He-Xiangning-Ink-Intent.html#about"
   },
   {
     "id": "2",
-    "name": "Acrylic Painting",
-    "description": "Unleash our creativity with a painting session. We'll have fun expressing ourselves on canvas.",
-    "time": "~2-3 hours",
-    "imagePath": "assets/images/acrylic_painting.jpg"
+    "name": "Passion is Volcanic",
+    "description": "A bold, conversation-heavy exhibition date about desire, the body, and how art blurs the line between the intimate and political.",
+    "time": "~2 hours",
+    "imagePath": "assets/images/passion_is_volcanic.jpg",
+    "websiteUrl": "https://www.nationalgallery.sg/sg/en/exhibitions/Passion-is-Volcanic-Desire-in-Southeast-Asian-Art.html#about"
   },
   {
     "id": "3",
-    "name": "Baking Class",
-    "description": "Learn to bake delicious treats together. A fun and tasty way to bond.",
+    "name": "Singapore Stories",
+    "description": "Wander through Singapore's art history together and trade stories about the works, ideas, and moments that feel most personal.",
     "time": "~2 hours",
-    "imagePath": "assets/images/baking.jpg"
+    "imagePath": "assets/images/singapore_stories.webp",
+    "websiteUrl": "https://www.nationalgallery.sg/sg/en/exhibitions/singapore-stories.html"
   },
   {
     "id": "4",
-    "name": "Tufting",
-    "description": "Create a cozy rug or wall hanging together. A unique and creative date idea.",
-    "time": "~2 hours",
-    "imagePath": "assets/images/tufting.jpg"
+    "name": "FRAMED: A Murder Mystery",
+    "description": "Solve clues across the Gallery as a team in a playful mystery date that mixes puzzles, suspense, and beautiful spaces.",
+    "time": "~1.5-2 hours",
+    "imagePath": "assets/images/framed_murder_mystery.webp",
+    "websiteUrl": "https://www.nationalgallery.sg/sg/en/workshops/framed-a-murder-mystery-at-national-gallery-singapore.html"
   },
   {
     "id": "5",
-    "name": "Pottery",
-    "description": "Create beautiful pottery pieces together. Maybe we can make matching mugs hehe",
-    "time": "~2 hours",
-    "imagePath": "assets/images/pottery.jpg"
+    "name": "How to Art with Friends",
+    "description": "Follow ten quirky art prompts through the museum and turn the visit into a light, playful date with plenty to react to together.",
+    "time": "~1-2 hours",
+    "imagePath": "assets/images/how_to_art_with_friends.png",
+    "websiteUrl": "https://www.nationalgallery.sg/sg/en/guided-tours/How-to-art-with-friends.html"
   },
   {
     "id": "6",
-    "name": "Sunset Picnic",
-    "description": "A cozy mat, our favorite snacks, kite flying, a few card games and relaxing talks. Just us and the golden hour.",
-    "time": "Evening, 5pm",
-    "imagePath": "assets/images/picnic.jpg"
+    "name": "Under Our Skin",
+    "description": "A talk-led date for deeper conversations on gender, identity, desire, and the ways art challenges how we see ourselves and others.",
+    "time": "~1.5-2 hours",
+    "imagePath": "assets/images/under_our_skin.png",
+    "websiteUrl": "https://www.nationalgallery.sg/sg/en/talks/Under-Our-Skin-Conversations-on-Gender-Identity-and-Body.html"
   },
   {
     "id": "7",
-    "name": "Tea Date",
-    "description": "A cozy tea session at Clipper Tea, relax, chat, and learn more about each other with a little “get to know you” card game.",
-    "time": "Afternoon, 2pm",
-    "imagePath": "assets/images/tea.jpg"
-  },
-  {
-    "id": "8",
-    "name": "Tea Brewing Workshop",
-    "description": "Explore the origins of tea, its role in Singaporean traditions, and the values of mindfulness and harmony it represents.",
-    "time": "~2 hours",
-    "imagePath": "assets/images/tea_workshop.jpg"
-  },
-  {
-    "id": "9",
-    "name": "Bag Charm Making",
-    "description": "Choose a design and sew lights on it!.",
-    "time": "~30 mins",
-    "imagePath": "assets/images/bag_charm.jpg"
+    "name": "Can a Machine Be an Artist?",
+    "description": "A thoughtful panel date about AI, creativity, authorship, and ownership, perfect if we want something modern and debate-worthy.",
+    "time": "~1.5-2 hours",
+    "imagePath": "assets/images/can_a_machine_be_an_artist.png",
+    "websiteUrl": "https://www.nationalgallery.sg/sg/en/talks/Insider-Series-Panel-Discussion-Can-a-Machine-Be-an-Artist.html"
   }
 ]

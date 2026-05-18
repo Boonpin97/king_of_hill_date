@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "date-with-jenn",
-    "prod": "date-with-jenn"
+    "default": "date-with-xinyi",
+    "prod": "date-with-xinyi"
   },
   "targets": {},
   "etags": {}

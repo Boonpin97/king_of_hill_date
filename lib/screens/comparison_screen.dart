@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import '../data/interaction_logger.dart';
 import '../models/date_idea.dart';
 import '../widgets/date_card.dart';
 
@@ -27,6 +30,7 @@ class ComparisonScreen extends StatefulWidget {
 
 class _ComparisonScreenState extends State<ComparisonScreen>
     with TickerProviderStateMixin {
+  final InteractionLogger _interactionLogger = InteractionLogger();
   late DateIdea _leftIdea;
   late DateIdea _rightIdea;
   int _currentRound = 1;
@@ -70,6 +74,8 @@ class _ComparisonScreenState extends State<ComparisonScreen>
           CurvedAnimation(parent: _rightController, curve: Curves.easeOutBack),
         );
 
+    unawaited(_interactionLogger.startSession(widget.dateIdeas));
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final screenWidth = MediaQuery.of(context).size.width;
       final isWideScreen = screenWidth > 700;
@@ -101,11 +107,23 @@ class _ComparisonScreenState extends State<ComparisonScreen>
     final leftWon = selected == _leftIdea;
     final screenWidth = MediaQuery.of(context).size.width;
     final isWideScreen = screenWidth > 700;
+    final currentLeftIdea = _leftIdea;
+    final currentRightIdea = _rightIdea;
+    final currentRound = _currentRound;
 
     setState(() {
       _isAnimating = true;
       _selectedIdea = selected;
     });
+
+    unawaited(
+      _interactionLogger.logRoundSelection(
+        roundNumber: currentRound,
+        leftIdea: currentLeftIdea,
+        rightIdea: currentRightIdea,
+        roundWinner: selected,
+      ),
+    );
 
     final exitLeft = isWideScreen
         ? const Offset(-1.5, 0)
@@ -137,6 +155,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
     }
 
     if (_nextIdeaIndex >= widget.dateIdeas.length) {
+      unawaited(_interactionLogger.completeSession(selected));
       widget.onComplete(selected);
       return;
     }
@@ -261,15 +280,6 @@ class _ComparisonScreenState extends State<ComparisonScreen>
                         ),
                       ),
                     ),
-                    child: Text(
-                      'Tap the card you would honestly be excited to do next.',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontSize: isCompactPortrait ? 13 : 14,
-                        color: theme.colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
                   ),
                 ),
             ],
@@ -319,7 +329,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
             if (!isShortMobile) ...[
               SizedBox(height: isCompactPortrait ? 8 : 10),
               Text(
-                'Two ideas enter. One date plan survives.',
+                'Tap the exhibition you\'re interested in',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,

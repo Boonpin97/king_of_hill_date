@@ -96,7 +96,7 @@ class IntroScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
-                                'Choose your next memory together',
+                                'Choose our next memory together',
                                 style: theme.textTheme.labelMedium?.copyWith(
                                   color: theme.colorScheme.onPrimaryContainer,
                                   fontWeight: FontWeight.w700,
@@ -168,7 +168,8 @@ class IntroScreen extends StatelessWidget {
                             height: isShortMobile ? 8 : (isCompact ? 12 : 14),
                           ),
                           Text(
-                            'A playful head-to-head vote between your favorite date ideas, designed to feel like a polished little mobile app instead of a form.',
+                            'Help us choose our next adventure together! '
+                            'Pick your favorites and let\'s find the perfect date :)',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: isShortMobile
                                   ? 14
@@ -181,28 +182,6 @@ class IntroScreen extends StatelessWidget {
                                 : TextOverflow.visible,
                             textAlign: TextAlign.center,
                           ),
-                          if (!isShortMobile) ...[
-                            SizedBox(height: isCompact ? 20 : 24),
-                            Wrap(
-                              alignment: WrapAlignment.center,
-                              spacing: 10,
-                              runSpacing: 10,
-                              children: const [
-                                _InfoChip(
-                                  icon: Icons.phone_iphone,
-                                  label: 'Portrait first',
-                                ),
-                                _InfoChip(
-                                  icon: Icons.auto_awesome,
-                                  label: 'Smooth rounds',
-                                ),
-                                _InfoChip(
-                                  icon: Icons.favorite_border,
-                                  label: 'Just for us',
-                                ),
-                              ],
-                            ),
-                          ],
                           SizedBox(
                             height: isShortMobile ? 18 : (isCompact ? 26 : 32),
                           ),
@@ -210,13 +189,12 @@ class IntroScreen extends StatelessWidget {
                             width: double.infinity,
                             child: FilledButton.icon(
                               onPressed: onStart,
-                              icon: const Icon(Icons.arrow_forward_rounded),
                               label: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 2,
                                 ),
                                 child: Text(
-                                  'Start choosing',
+                                  'Let\'s go',
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700,
@@ -227,15 +205,6 @@ class IntroScreen extends StatelessWidget {
                           ),
                           SizedBox(
                             height: isShortMobile ? 10 : (isCompact ? 14 : 18),
-                          ),
-                          Text(
-                            '9 ideas, one winner, zero overthinking',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.72),
-                              fontWeight: FontWeight.w600,
-                            ),
-                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
@@ -267,39 +236,6 @@ class _GlowOrb extends StatelessWidget {
           shape: BoxShape.circle,
           gradient: RadialGradient(colors: [color, color.withValues(alpha: 0)]),
         ),
-      ),
-    );
-  }
-}
-
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _InfoChip({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: theme.colorScheme.primary),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: theme.textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
       ),
     );
   }

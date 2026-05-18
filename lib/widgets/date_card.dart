@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../models/date_idea.dart';
 
 /// A beautiful card widget displaying a date idea.
@@ -16,11 +18,24 @@ class DateCard extends StatelessWidget {
     this.isCompactBattle = false,
   });
 
+  Future<void> _openDetails(BuildContext context) async {
+    final uri = Uri.parse(dateIdea.websiteUrl);
+    final didLaunch = await launchUrl(uri, mode: LaunchMode.platformDefault);
+
+    if (!didLaunch && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open the website right now.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isCompact = screenWidth < 430;
+    final titleFontSize = isCompact ? 24.0 : 28.0;
+    final descriptionFontSize = isCompact ? 13.5 : 14.5;
     final horizontalMargin = isWinner ? 44.0 : 28.0;
     final maxCardWidth = isWinner ? 360.0 : 380.0;
     final minCardWidth = isWinner ? 286.0 : 280.0;
@@ -111,14 +126,13 @@ class DateCard extends StatelessWidget {
                         right: 14,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: isCompactBattle
-                                ? 9
-                                : (isCompact ? 10 : 12),
-                            vertical: isCompactBattle ? 5 : (isCompact ? 6 : 7),
+                            horizontal: isCompact ? 10 : 12,
+                            vertical: isCompact ? 6 : 7,
                           ),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer
-                                .withValues(alpha: 0.92),
+                            color: theme.colorScheme.primaryContainer.withValues(
+                              alpha: 0.92,
+                            ),
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Row(
@@ -149,7 +163,7 @@ class DateCard extends StatelessWidget {
                         child: Text(
                           dateIdea.name,
                           style: theme.textTheme.headlineSmall?.copyWith(
-                            fontSize: isCompact ? 24 : 28,
+                            fontSize: titleFontSize,
                             color: Colors.white,
                             height: 1.05,
                           ),
@@ -181,7 +195,7 @@ class DateCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
-                            isWinner ? 'Final answer' : 'Tap if this wins',
+                            'Pick your favorite',
                             style: theme.textTheme.labelMedium?.copyWith(
                               color: theme.colorScheme.onSecondaryContainer,
                               fontWeight: FontWeight.w700,
@@ -193,9 +207,22 @@ class DateCard extends StatelessWidget {
                           child: Text(
                             dateIdea.description,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              fontSize: isCompact ? 13.5 : 14.5,
+                              fontSize: descriptionFontSize,
                               color: theme.colorScheme.onSurfaceVariant,
                               height: 1.45,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () => _openDetails(context),
+                          child: Text(
+                            'See more',
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                              decoration: TextDecoration.underline,
+                              decorationColor: theme.colorScheme.primary,
                             ),
                           ),
                         ),
@@ -252,6 +279,9 @@ class DateCard extends StatelessWidget {
   }
 
   Widget _buildCompactBattleCard(BuildContext context, ThemeData theme) {
+    final compactTitleFontSize = 16.0;
+    final compactDescriptionFontSize = 12.0;
+
     return MouseRegion(
       cursor: onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
       child: AnimatedContainer(
@@ -287,19 +317,12 @@ class DateCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Expanded(
-                              child: Text(
-                                dateIdea.time,
-                                style: theme.textTheme.labelMedium?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                            Text(
+                              dateIdea.time,
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w800,
                               ),
-                            ),
-                            Icon(
-                              Icons.favorite_rounded,
-                              size: 16,
-                              color: theme.colorScheme.primary,
                             ),
                           ],
                         ),
@@ -307,6 +330,7 @@ class DateCard extends StatelessWidget {
                         Text(
                           dateIdea.name,
                           style: theme.textTheme.titleMedium?.copyWith(
+                            fontSize: compactTitleFontSize,
                             color: theme.colorScheme.onSurface,
                             fontWeight: FontWeight.w800,
                             height: 1.05,
@@ -319,19 +343,23 @@ class DateCard extends StatelessWidget {
                           child: Text(
                             dateIdea.description,
                             style: theme.textTheme.bodySmall?.copyWith(
+                              fontSize: compactDescriptionFontSize,
                               color: theme.colorScheme.onSurfaceVariant,
                               height: 1.25,
                             ),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(height: 6),
-                        Text(
-                          isWinner ? 'Final answer' : 'Choose this idea',
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.w800,
+                        GestureDetector(
+                          onTap: () => _openDetails(context),
+                          child: Text(
+                            'See more',
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                              decoration: TextDecoration.underline,
+                              decorationColor: theme.colorScheme.primary,
+                            ),
                           ),
                         ),
                       ],
@@ -354,27 +382,6 @@ class DateCard extends StatelessWidget {
                                 Colors.transparent,
                                 Colors.black.withValues(alpha: 0.1),
                               ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 10,
-                        bottom: 10,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(
-                            isWinner ? 'Winner' : 'Tap',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.onSurface,
-                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),

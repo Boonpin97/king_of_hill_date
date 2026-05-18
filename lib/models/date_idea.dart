@@ -5,6 +5,7 @@ class DateIdea {
   final String description;
   final String time;
   final String imagePath;
+  final String websiteUrl;
 
   const DateIdea({
     required this.id,
@@ -12,6 +13,7 @@ class DateIdea {
     required this.description,
     required this.time,
     required this.imagePath,
+    required this.websiteUrl,
   });
 
   /// Creates a DateIdea from a JSON map.
@@ -22,6 +24,7 @@ class DateIdea {
       description: json['description'] as String,
       time: json['time'] as String,
       imagePath: json['imagePath'] as String,
+      websiteUrl: json['websiteUrl'] as String,
     );
   }
 
@@ -33,6 +36,7 @@ class DateIdea {
       'description': description,
       'time': time,
       'imagePath': imagePath,
+      'websiteUrl': websiteUrl,
     };
   }
 }

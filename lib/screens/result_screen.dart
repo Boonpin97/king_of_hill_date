@@ -160,13 +160,6 @@ class _ResultScreenState extends State<ResultScreen>
                           ),
                           if (!isShortMobile) ...[
                             SizedBox(height: isCompact ? 10 : 12),
-                            Text(
-                              'This one made it through every round. Lock it in before you overthink it.',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
                           ],
                           SizedBox(
                             height: isShortMobile ? 12 : (isCompact ? 20 : 24),
@@ -193,7 +186,7 @@ class _ResultScreenState extends State<ResultScreen>
                                   size: isCompact ? 18 : 20,
                                 ),
                                 Text(
-                                  'Can\'t wait to spend this time with you.',
+                                  'Can\'t wait to spend this time with you :)',
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     fontSize: isCompact ? 14 : null,
                                     color: theme.colorScheme.onSurface,
@@ -207,14 +200,6 @@ class _ResultScreenState extends State<ResultScreen>
                           ],
                           SizedBox(
                             height: isShortMobile ? 14 : (isCompact ? 24 : 30),
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: OutlinedButton.icon(
-                              onPressed: widget.onRestart,
-                              icon: const Icon(Icons.refresh_rounded),
-                              label: const Text('Start another round'),
-                            ),
                           ),
                         ],
                       ),
