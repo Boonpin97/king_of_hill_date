@@ -11,8 +11,9 @@ class IntroScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
     final isCompact = screenSize.width < 430;
+    final isShortMobile = isCompact && screenSize.height < 740;
     final isPortrait = screenSize.height > screenSize.width;
-    final pagePadding = isCompact ? 18.0 : 28.0;
+    final pagePadding = isShortMobile ? 14.0 : (isCompact ? 18.0 : 28.0);
     final maxPanelWidth = isPortrait ? 460.0 : 720.0;
 
     return Scaffold(
@@ -55,19 +56,25 @@ class IntroScreen extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.fromLTRB(
                         isCompact ? 20 : 28,
-                        isCompact ? 22 : 30,
+                        isShortMobile ? 18 : (isCompact ? 22 : 30),
                         isCompact ? 20 : 28,
-                        isCompact ? 20 : 26,
+                        isShortMobile ? 18 : (isCompact ? 20 : 26),
                       ),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surface.withValues(alpha: 0.78),
+                        color: theme.colorScheme.surface.withValues(
+                          alpha: 0.78,
+                        ),
                         borderRadius: BorderRadius.circular(34),
                         border: Border.all(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.06,
+                          ),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.shadow.withValues(alpha: 0.12),
+                            color: theme.colorScheme.shadow.withValues(
+                              alpha: 0.12,
+                            ),
                             blurRadius: 32,
                             offset: const Offset(0, 18),
                           ),
@@ -97,17 +104,26 @@ class IntroScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(height: isCompact ? 24 : 30),
+                          SizedBox(
+                            height: isShortMobile ? 16 : (isCompact ? 24 : 30),
+                          ),
                           TweenAnimationBuilder<double>(
                             tween: Tween(begin: 0.88, end: 1.0),
                             duration: const Duration(milliseconds: 1200),
                             curve: Curves.easeOutBack,
                             builder: (context, scale, child) {
-                              return Transform.scale(scale: scale, child: child);
+                              return Transform.scale(
+                                scale: scale,
+                                child: child,
+                              );
                             },
                             child: Container(
-                              width: isCompact ? 92 : 108,
-                              height: isCompact ? 92 : 108,
+                              width: isShortMobile
+                                  ? 72
+                                  : (isCompact ? 92 : 108),
+                              height: isShortMobile
+                                  ? 72
+                                  : (isCompact ? 92 : 108),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
@@ -120,56 +136,85 @@ class IntroScreen extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.28),
+                                    color: theme.colorScheme.primary.withValues(
+                                      alpha: 0.28,
+                                    ),
                                     blurRadius: 30,
                                     offset: const Offset(0, 16),
                                   ),
                                 ],
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.favorite_rounded,
-                                size: 44,
+                                size: isShortMobile ? 34 : 44,
                                 color: Colors.white,
                               ),
                             ),
                           ),
-                          SizedBox(height: isCompact ? 22 : 28),
+                          SizedBox(
+                            height: isShortMobile ? 14 : (isCompact ? 22 : 28),
+                          ),
                           Text(
                             'Our Perfect Date',
                             style: theme.textTheme.displaySmall?.copyWith(
-                              fontSize: isCompact ? 36 : 48,
+                              fontSize: isShortMobile
+                                  ? 32
+                                  : (isCompact ? 36 : 48),
                               color: theme.colorScheme.onSurface,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: isCompact ? 12 : 14),
+                          SizedBox(
+                            height: isShortMobile ? 8 : (isCompact ? 12 : 14),
+                          ),
                           Text(
                             'A playful head-to-head vote between your favorite date ideas, designed to feel like a polished little mobile app instead of a form.',
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              fontSize: isCompact ? 15 : 17,
+                              fontSize: isShortMobile
+                                  ? 14
+                                  : (isCompact ? 15 : 17),
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
+                            maxLines: isShortMobile ? 3 : null,
+                            overflow: isShortMobile
+                                ? TextOverflow.ellipsis
+                                : TextOverflow.visible,
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: isCompact ? 20 : 24),
-                          Wrap(
-                            alignment: WrapAlignment.center,
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: const [
-                              _InfoChip(icon: Icons.phone_iphone, label: 'Portrait first'),
-                              _InfoChip(icon: Icons.auto_awesome, label: 'Smooth rounds'),
-                              _InfoChip(icon: Icons.favorite_border, label: 'Just for us'),
-                            ],
+                          if (!isShortMobile) ...[
+                            SizedBox(height: isCompact ? 20 : 24),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: const [
+                                _InfoChip(
+                                  icon: Icons.phone_iphone,
+                                  label: 'Portrait first',
+                                ),
+                                _InfoChip(
+                                  icon: Icons.auto_awesome,
+                                  label: 'Smooth rounds',
+                                ),
+                                _InfoChip(
+                                  icon: Icons.favorite_border,
+                                  label: 'Just for us',
+                                ),
+                              ],
+                            ),
+                          ],
+                          SizedBox(
+                            height: isShortMobile ? 18 : (isCompact ? 26 : 32),
                           ),
-                          SizedBox(height: isCompact ? 26 : 32),
                           SizedBox(
                             width: double.infinity,
                             child: FilledButton.icon(
                               onPressed: onStart,
                               icon: const Icon(Icons.arrow_forward_rounded),
                               label: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 2,
+                                ),
                                 child: Text(
                                   'Start choosing',
                                   style: theme.textTheme.titleMedium?.copyWith(
@@ -180,11 +225,14 @@ class IntroScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(height: isCompact ? 14 : 18),
+                          SizedBox(
+                            height: isShortMobile ? 10 : (isCompact ? 14 : 18),
+                          ),
                           Text(
                             '9 ideas, one winner, zero overthinking',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.72),
+                              color: theme.colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.72),
                               fontWeight: FontWeight.w600,
                             ),
                             textAlign: TextAlign.center,
@@ -217,9 +265,7 @@ class _GlowOrb extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [color, color.withValues(alpha: 0)],
-          ),
+          gradient: RadialGradient(colors: [color, color.withValues(alpha: 0)]),
         ),
       ),
     );

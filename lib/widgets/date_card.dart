@@ -6,12 +6,14 @@ class DateCard extends StatelessWidget {
   final DateIdea dateIdea;
   final VoidCallback? onTap;
   final bool isWinner;
+  final bool isCompactBattle;
 
   const DateCard({
     super.key,
     required this.dateIdea,
     this.onTap,
     this.isWinner = false,
+    this.isCompactBattle = false,
   });
 
   @override
@@ -28,6 +30,10 @@ class DateCard extends StatelessWidget {
     final cardHeight = (cardWidth * (isWinner ? 1.26 : 1.3))
         .clamp(isWinner ? 390.0 : 360.0, isWinner ? 470.0 : 460.0)
         .toDouble();
+
+    if (isCompactBattle) {
+      return _buildCompactBattleCard(context, theme);
+    }
 
     return MouseRegion(
       cursor: onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
@@ -105,13 +111,14 @@ class DateCard extends StatelessWidget {
                         right: 14,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: isCompact ? 10 : 12,
-                            vertical: isCompact ? 6 : 7,
+                            horizontal: isCompactBattle
+                                ? 9
+                                : (isCompact ? 10 : 12),
+                            vertical: isCompactBattle ? 5 : (isCompact ? 6 : 7),
                           ),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer.withValues(
-                              alpha: 0.92,
-                            ),
+                            color: theme.colorScheme.primaryContainer
+                                .withValues(alpha: 0.92),
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Row(
@@ -202,8 +209,12 @@ class DateCard extends StatelessWidget {
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  theme.colorScheme.primary.withValues(alpha: 0.12),
-                                  theme.colorScheme.secondary.withValues(alpha: 0.12),
+                                  theme.colorScheme.primary.withValues(
+                                    alpha: 0.12,
+                                  ),
+                                  theme.colorScheme.secondary.withValues(
+                                    alpha: 0.12,
+                                  ),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(18),
@@ -240,10 +251,150 @@ class DateCard extends StatelessWidget {
     );
   }
 
-  Widget _buildImage() {
+  Widget _buildCompactBattleCard(BuildContext context, ThemeData theme) {
+    return MouseRegion(
+      cursor: onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.primary.withValues(alpha: 0.12),
+              blurRadius: 14,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  flex: 7,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                dateIdea.time,
+                                style: theme.textTheme.labelMedium?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              Icons.favorite_rounded,
+                              size: 16,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          dateIdea.name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                            fontWeight: FontWeight.w800,
+                            height: 1.05,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Expanded(
+                          child: Text(
+                            dateIdea.description,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              height: 1.25,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          isWinner ? 'Final answer' : 'Choose this idea',
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      _buildImage(alignment: Alignment.center),
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerRight,
+                              end: Alignment.centerLeft,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withValues(alpha: 0.1),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 10,
+                        bottom: 10,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            isWinner ? 'Winner' : 'Tap',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.onSurface,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImage({Alignment alignment = Alignment.center}) {
     return Image.asset(
       dateIdea.imagePath,
       fit: BoxFit.cover,
+      alignment: alignment,
       errorBuilder: (context, error, stackTrace) {
         return Container(
           color: Colors.grey[300],
@@ -251,7 +402,11 @@ class DateCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.photo_camera_back, size: 48, color: Colors.grey[500]),
+                Icon(
+                  Icons.photo_camera_back,
+                  size: 48,
+                  color: Colors.grey[500],
+                ),
                 const SizedBox(height: 8),
                 Text(
                   'Add your image',

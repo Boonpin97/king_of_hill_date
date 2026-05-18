@@ -60,32 +60,30 @@ class _ComparisonScreenState extends State<ComparisonScreen>
       vsync: this,
     );
 
-    _leftSlideAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _leftController, curve: Curves.easeInBack),
-    );
+    _leftSlideAnimation = Tween<Offset>(begin: Offset.zero, end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _leftController, curve: Curves.easeInBack),
+        );
 
-    _rightSlideAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _rightController, curve: Curves.easeOutBack),
-    );
+    _rightSlideAnimation = Tween<Offset>(begin: Offset.zero, end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _rightController, curve: Curves.easeOutBack),
+        );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final screenWidth = MediaQuery.of(context).size.width;
       final isWideScreen = screenWidth > 700;
-      final enterRight =
-          isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
+      final enterRight = isWideScreen
+          ? const Offset(1.5, 0)
+          : const Offset(0, 1.5);
 
-      _rightSlideAnimation = Tween<Offset>(
-        begin: enterRight,
-        end: Offset.zero,
-      ).animate(
-        CurvedAnimation(parent: _rightController, curve: Curves.easeOutBack),
-      );
+      _rightSlideAnimation = Tween<Offset>(begin: enterRight, end: Offset.zero)
+          .animate(
+            CurvedAnimation(
+              parent: _rightController,
+              curve: Curves.easeOutBack,
+            ),
+          );
       _rightController.forward();
     });
   }
@@ -109,27 +107,31 @@ class _ComparisonScreenState extends State<ComparisonScreen>
       _selectedIdea = selected;
     });
 
-    final exitLeft = isWideScreen ? const Offset(-1.5, 0) : const Offset(0, -1.5);
-    final exitRight = isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
-    final enterLeft = isWideScreen ? const Offset(-1.5, 0) : const Offset(0, -1.5);
-    final enterRight = isWideScreen ? const Offset(1.5, 0) : const Offset(0, 1.5);
+    final exitLeft = isWideScreen
+        ? const Offset(-1.5, 0)
+        : const Offset(0, -1.5);
+    final exitRight = isWideScreen
+        ? const Offset(1.5, 0)
+        : const Offset(0, 1.5);
+    final enterLeft = isWideScreen
+        ? const Offset(-1.5, 0)
+        : const Offset(0, -1.5);
+    final enterRight = isWideScreen
+        ? const Offset(1.5, 0)
+        : const Offset(0, 1.5);
 
     if (leftWon) {
-      _rightSlideAnimation = Tween<Offset>(
-        begin: Offset.zero,
-        end: exitRight,
-      ).animate(
-        CurvedAnimation(parent: _rightController, curve: Curves.easeInBack),
-      );
+      _rightSlideAnimation = Tween<Offset>(begin: Offset.zero, end: exitRight)
+          .animate(
+            CurvedAnimation(parent: _rightController, curve: Curves.easeInBack),
+          );
       _rightController.reset();
       await _rightController.forward();
     } else {
-      _leftSlideAnimation = Tween<Offset>(
-        begin: Offset.zero,
-        end: exitLeft,
-      ).animate(
-        CurvedAnimation(parent: _leftController, curve: Curves.easeInBack),
-      );
+      _leftSlideAnimation = Tween<Offset>(begin: Offset.zero, end: exitLeft)
+          .animate(
+            CurvedAnimation(parent: _leftController, curve: Curves.easeInBack),
+          );
       _leftController.reset();
       await _leftController.forward();
     }
@@ -153,21 +155,20 @@ class _ComparisonScreenState extends State<ComparisonScreen>
     });
 
     if (leftWon) {
-      _rightSlideAnimation = Tween<Offset>(
-        begin: enterRight,
-        end: Offset.zero,
-      ).animate(
-        CurvedAnimation(parent: _rightController, curve: Curves.easeOutBack),
-      );
+      _rightSlideAnimation = Tween<Offset>(begin: enterRight, end: Offset.zero)
+          .animate(
+            CurvedAnimation(
+              parent: _rightController,
+              curve: Curves.easeOutBack,
+            ),
+          );
       _rightController.reset();
       await _rightController.forward();
     } else {
-      _leftSlideAnimation = Tween<Offset>(
-        begin: enterLeft,
-        end: Offset.zero,
-      ).animate(
-        CurvedAnimation(parent: _leftController, curve: Curves.easeOutBack),
-      );
+      _leftSlideAnimation = Tween<Offset>(begin: enterLeft, end: Offset.zero)
+          .animate(
+            CurvedAnimation(parent: _leftController, curve: Curves.easeOutBack),
+          );
       _leftController.reset();
       await _leftController.forward();
     }
@@ -186,6 +187,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
         !isWideScreen &&
         screenSize.width < 430 &&
         screenSize.height > screenSize.width;
+    final isShortMobile = !isWideScreen && screenSize.height < 740;
 
     return Scaffold(
       body: DecoratedBox(
@@ -203,52 +205,73 @@ class _ComparisonScreenState extends State<ComparisonScreen>
         child: SafeArea(
           child: Column(
             children: [
-              _buildHeader(theme, isCompactPortrait),
+              _buildHeader(
+                theme,
+                isCompactPortrait,
+                isShortMobile: isShortMobile,
+              ),
               Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isCompactPortrait ? 12 : 16,
-                      vertical: isCompactPortrait ? 16 : 24,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: isWideScreen ? 980 : 430,
+                child: isWideScreen
+                    ? Center(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 24,
+                          ),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 980),
+                            child: _buildHorizontalLayout(),
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isCompactPortrait ? 12 : 16,
+                          vertical: isShortMobile ? 6 : 10,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 430),
+                          child: _buildVerticalLayout(
+                            isCompactPortrait,
+                            compactCards: true,
+                            isShortMobile: isShortMobile,
+                          ),
+                        ),
                       ),
-                      child: isWideScreen
-                          ? _buildHorizontalLayout()
-                          : _buildVerticalLayout(isCompactPortrait),
-                    ),
-                  ),
-                ),
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  16,
-                  0,
-                  16,
-                  isCompactPortrait ? 14 : 24,
-                ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface.withValues(alpha: 0.8),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.06),
+              if (!isShortMobile)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    0,
+                    16,
+                    isCompactPortrait ? 12 : 24,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.06,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      'Tap the card you would honestly be excited to do next.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontSize: isCompactPortrait ? 13 : 14,
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  child: Text(
-                    'Tap the card you would honestly be excited to do next.',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: isCompactPortrait ? 13 : 14,
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -256,21 +279,25 @@ class _ComparisonScreenState extends State<ComparisonScreen>
     );
   }
 
-  Widget _buildHeader(ThemeData theme, bool isCompactPortrait) {
+  Widget _buildHeader(
+    ThemeData theme,
+    bool isCompactPortrait, {
+    required bool isShortMobile,
+  }) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
         isCompactPortrait ? 12 : 16,
+        isShortMobile ? 8 : (isCompactPortrait ? 12 : 16),
         isCompactPortrait ? 12 : 16,
-        isCompactPortrait ? 12 : 16,
-        isCompactPortrait ? 8 : 16,
+        isShortMobile ? 6 : (isCompactPortrait ? 8 : 16),
       ),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 760),
         padding: EdgeInsets.fromLTRB(
-          isCompactPortrait ? 16 : 20,
-          isCompactPortrait ? 16 : 18,
-          isCompactPortrait ? 16 : 20,
-          isCompactPortrait ? 14 : 18,
+          isShortMobile ? 14 : (isCompactPortrait ? 16 : 20),
+          isShortMobile ? 12 : (isCompactPortrait ? 16 : 18),
+          isShortMobile ? 14 : (isCompactPortrait ? 16 : 20),
+          isShortMobile ? 12 : (isCompactPortrait ? 14 : 18),
         ),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface.withValues(alpha: 0.82),
@@ -284,27 +311,31 @@ class _ComparisonScreenState extends State<ComparisonScreen>
             Text(
               'Which one speaks to you?',
               style: theme.textTheme.headlineSmall?.copyWith(
-                fontSize: isCompactPortrait ? 24 : null,
+                fontSize: isShortMobile ? 20 : (isCompactPortrait ? 24 : null),
                 color: theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: isCompactPortrait ? 8 : 10),
-            Text(
-              'Two ideas enter. One date plan survives.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
+            if (!isShortMobile) ...[
+              SizedBox(height: isCompactPortrait ? 8 : 10),
+              Text(
+                'Two ideas enter. One date plan survives.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
+            ],
+            SizedBox(
+              height: isShortMobile ? 10 : (isCompactPortrait ? 12 : 14),
             ),
-            SizedBox(height: isCompactPortrait ? 12 : 14),
             Row(
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: isCompactPortrait ? 14 : 16,
-                    vertical: isCompactPortrait ? 8 : 10,
+                    vertical: isShortMobile ? 7 : (isCompactPortrait ? 8 : 10),
                   ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primaryContainer,
@@ -313,7 +344,9 @@ class _ComparisonScreenState extends State<ComparisonScreen>
                   child: Text(
                     'Round $_currentRound of $_totalRounds',
                     style: theme.textTheme.labelLarge?.copyWith(
-                      fontSize: isCompactPortrait ? 12 : null,
+                      fontSize: isShortMobile
+                          ? 11
+                          : (isCompactPortrait ? 12 : null),
                       color: theme.colorScheme.onPrimaryContainer,
                       fontWeight: FontWeight.w700,
                     ),
@@ -325,8 +358,11 @@ class _ComparisonScreenState extends State<ComparisonScreen>
                     borderRadius: BorderRadius.circular(999),
                     child: LinearProgressIndicator(
                       value: _currentRound / _totalRounds,
-                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                      minHeight: isCompactPortrait ? 10 : 12,
+                      backgroundColor:
+                          theme.colorScheme.surfaceContainerHighest,
+                      minHeight: isShortMobile
+                          ? 8
+                          : (isCompactPortrait ? 10 : 12),
                     ),
                   ),
                 ),
@@ -363,54 +399,74 @@ class _ComparisonScreenState extends State<ComparisonScreen>
     );
   }
 
-  Widget _buildVerticalLayout(bool isCompactPortrait) {
+  Widget _buildVerticalLayout(
+    bool isCompactPortrait, {
+    bool compactCards = false,
+    bool isShortMobile = false,
+  }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SlideTransition(
-          position: _leftSlideAnimation,
-          child: _buildLeftCard(),
+        Expanded(
+          child: SlideTransition(
+            position: _leftSlideAnimation,
+            child: _buildLeftCard(isCompactBattle: compactCards),
+          ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: isCompactPortrait ? 12 : 16),
-          child: _buildVsIndicator(isCompactPortrait: isCompactPortrait),
+          padding: EdgeInsets.symmetric(
+            vertical: isShortMobile ? 7 : (isCompactPortrait ? 10 : 14),
+          ),
+          child: _buildVsIndicator(
+            isCompactPortrait: isCompactPortrait,
+            isShortMobile: isShortMobile,
+          ),
         ),
-        SlideTransition(
-          position: _rightSlideAnimation,
-          child: _buildRightCard(),
+        Expanded(
+          child: SlideTransition(
+            position: _rightSlideAnimation,
+            child: _buildRightCard(isCompactBattle: compactCards),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildLeftCard() {
+  Widget _buildLeftCard({bool isCompactBattle = false}) {
     final isSelected = _selectedIdea == _leftIdea;
     return AnimatedScale(
       scale: isSelected ? 1.03 : 1.0,
       duration: const Duration(milliseconds: 200),
       child: DateCard(
         dateIdea: _leftIdea,
+        isCompactBattle: isCompactBattle,
         onTap: _isAnimating ? null : () => _handleSelection(_leftIdea),
       ),
     );
   }
 
-  Widget _buildRightCard() {
+  Widget _buildRightCard({bool isCompactBattle = false}) {
     final isSelected = _selectedIdea == _rightIdea;
     return AnimatedScale(
       scale: isSelected ? 1.03 : 1.0,
       duration: const Duration(milliseconds: 200),
       child: DateCard(
         dateIdea: _rightIdea,
+        isCompactBattle: isCompactBattle,
         onTap: _isAnimating ? null : () => _handleSelection(_rightIdea),
       ),
     );
   }
 
-  Widget _buildVsIndicator({bool isCompactPortrait = false}) {
+  Widget _buildVsIndicator({
+    bool isCompactPortrait = false,
+    bool isShortMobile = false,
+  }) {
     final theme = Theme.of(context);
     return Container(
-      padding: EdgeInsets.all(isCompactPortrait ? 14 : 16),
+      padding: EdgeInsets.all(
+        isShortMobile ? 10 : (isCompactPortrait ? 12 : 16),
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -432,7 +488,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
       child: Text(
         'VS',
         style: theme.textTheme.titleMedium?.copyWith(
-          fontSize: isCompactPortrait ? 15 : null,
+          fontSize: isShortMobile ? 12 : (isCompactPortrait ? 14 : null),
           fontWeight: FontWeight.w800,
           color: theme.colorScheme.onPrimaryContainer,
           letterSpacing: 1.2,
